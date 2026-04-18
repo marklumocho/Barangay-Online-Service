@@ -236,22 +236,26 @@
                                     <div class="md:col-span-2 space-y-2">
                                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">First Name</label>
                                         <input type="text" name="first_name" value="{{ old('first_name') }}" required
+                                        style="text-transform: uppercase;"
                                             class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
                                     </div>
                                     <div class="space-y-2">
                                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 block text-center">M.I.</label>
                                         <input type="text" name="middle_initial" maxlength="1" value="{{ old('middle_initial') }}"
+                                        style="text-transform: uppercase;"
                                             class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-center uppercase">
                                     </div>
                                     <div class="space-y-2">
                                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Last Name</label>
                                         <input type="text" name="last_name" value="{{ old('last_name') }}" required
+                                        style="text-transform: uppercase;"
                                             class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
                                     </div>
                                 </div>
                                 <div class="mt-4 space-y-2">
                                     <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Home Address</label>
-                                    <input type="text" name="address" value="{{ old('address') }}" placeholder="e.g. Blk 1 Lot 2, Sampaguita St."
+                                    <input type="text" name="address" value="{{ old('address') }}" placeholder="e.g. PUROK GARCIA"
+                                    style="text-transform: uppercase;"
                                         class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold" required>
                                 </div>
                                 <div class="mt-6 flex justify-end">
@@ -265,7 +269,8 @@
 
                         {{-- Search Bar --}}
                         <form method="GET" action="/" class="flex gap-3">
-                            <input type="hidden" name="tab" value="registry">
+                            <input type="hidden" name="tab" value="registry"
+                            style="text-transform: uppercase;">
                             <div class="relative flex-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -354,11 +359,13 @@
                                     <div class="space-y-2">
                                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">First Name</label>
                                         <input type="text" name="first_name" value="{{ old('first_name') }}" required
+                                        style="text-transform: uppercase;"
                                             class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
                                     </div>
                                     <div class="space-y-2">
                                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Last Name</label>
                                         <input type="text" name="last_name" value="{{ old('last_name') }}" required
+                                        style="text-transform: uppercase;"
                                             class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
                                     </div>
                                 </div>
@@ -482,16 +489,19 @@
                                 <div class="md:col-span-2 space-y-2">
                                     <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">First Name</label>
                                     <input type="text" name="first_name" value="{{ old('first_name', Auth::user()->first_name ?? '') }}"
+                                    style="text-transform: uppercase;"
                                         class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold" required>
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 block text-center">M.I.</label>
                                     <input type="text" name="middle_initial" maxlength="1" value="{{ old('middle_initial') }}"
+                                    style="text-transform: uppercase;"
                                         class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-center uppercase">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Last Name</label>
                                     <input type="text" name="last_name" value="{{ old('last_name', Auth::user()->last_name ?? '') }}"
+                                    style="text-transform: uppercase;"
                                         class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold" required>
                                 </div>
                             </div>
@@ -509,14 +519,9 @@
                                 <div class="space-y-2">
                                     <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Purpose</label>
                                     <input type="text" name="purpose" value="{{ old('purpose') }}" placeholder="e.g. Job Application"
+                                    style="text-transform: uppercase;"  
                                         class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold" required>
                                 </div>
-                            </div>
-
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Additional Notes (Optional)</label>
-                                <textarea name="notes" rows="3"
-                                    class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold resize-none">{{ old('notes') }}</textarea>
                             </div>
 
                             <button type="submit"
