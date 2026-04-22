@@ -9,9 +9,9 @@ return new class extends Migration {
             $table->id();
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('middle_initial')->nullable();
+            $table->string('middle_name')->nullable();
             $table->string('resident_id')->unique();
-            $table->string('address')->nullable();
+            $table->string('address');
             $table->timestamps();
         });
     }

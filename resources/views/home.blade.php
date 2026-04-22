@@ -51,7 +51,7 @@
 
     <main class="max-w-6xl mx-auto mt-10 px-6">
 
-        {{-- Alerts --}}
+        {{-- All Alerts --}}
         @if($errors->has('not_resident'))
             <div class="max-w-3xl mx-auto mb-6 bg-red-50 border border-red-200 text-red-700 font-semibold text-sm px-6 py-4 rounded-2xl flex items-center gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -61,8 +61,17 @@
             </div>
         @endif
 
+        @if($errors->has('duplicate_app'))
+            <div class="max-w-3xl mx-auto mb-6 bg-amber-50 border border-amber-200 text-amber-700 font-semibold text-sm px-6 py-4 rounded-2xl flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                </svg>
+                {{ $errors->first('duplicate_app') }}
+            </div>
+        @endif
+
         @if($errors->has('duplicate_resident'))
-            <div id="err-alert" class="mb-6 bg-red-50 border border-red-200 text-red-700 font-semibold text-sm px-6 py-4 rounded-2xl flex items-center gap-3">
+            <div class="mb-6 bg-red-50 border border-red-200 text-red-700 font-semibold text-sm px-6 py-4 rounded-2xl flex items-center gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
                 </svg>
@@ -76,6 +85,15 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
                 </svg>
                 {{ $errors->first('staff_error') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="max-w-3xl mx-auto mb-6 bg-red-50 border border-red-200 text-red-700 font-semibold text-sm px-6 py-4 rounded-2xl flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                </svg>
+                {{ session('error') }}
             </div>
         @endif
 
@@ -144,7 +162,7 @@
                         </div>
                     </header>
 
-                    {{-- Tab Buttons --}}
+                    {{-- Tabs --}}
                     <div class="flex gap-2 flex-wrap">
                         <button onclick="switchTab('applications')" id="tab-applications"
                             class="tab-btn active px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest">
@@ -167,7 +185,8 @@
                                 <thead>
                                     <tr class="bg-slate-50 border-b border-slate-100">
                                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Resident / ID</th>
-                                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Requested Document</th>
+                                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Document / Purpose</th>
+                                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Submitted</th>
                                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
                                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
                                     </tr>
@@ -176,18 +195,35 @@
                                     @forelse($applications ?? [] as $app)
                                         <tr class="group transition-all hover:bg-slate-50/50">
                                             <td class="px-8 py-6">
-                                                <p class="font-extrabold text-slate-800">{{ $app->resident_name }}</p>
+                                                <p class="font-extrabold text-slate-800 uppercase">{{ $app->resident_name }}</p>
                                                 <p class="text-[10px] font-bold text-blue-600 tracking-wider">ID: {{ $app->resident_id }}</p>
                                             </td>
                                             <td class="px-8 py-6">
-                                                <p class="text-sm font-bold text-slate-700">{{ $app->document_type }}</p>
-                                                <p class="text-[11px] text-slate-400 mt-0.5 italic">"{{ $app->purpose }}"</p>
+                                                <p class="text-sm font-bold text-slate-700 uppercase">{{ $app->document_type }}</p>
+                                                <p class="text-[11px] text-slate-400 mt-0.5 italic uppercase">"{{ $app->purpose }}"</p>
+                                            </td>
+                                            <td class="px-8 py-6">
+                                                <p class="text-xs font-semibold text-slate-500">{{ $app->created_at->format('M d, Y') }}</p>
+                                                @if($app->status === 'approved')
+                                                    @php $hoursLeft = now()->diffInHours($app->created_at->addDays(2), false); @endphp
+                                                    @if($hoursLeft <= 24 && $hoursLeft > 0)
+                                                    <p class="text-[10px] font-black text-red-500 mt-0.5">
+                                                    ⚠ Auto-decline in {{ number_format($hoursLeft, 2) }} hour/s</p>
+                                                    @endif
+                                                @endif
+                                                @if($app->status === 'picked_up' && $app->picked_up_at)
+                                                    <p class="text-[10px] text-slate-400 mt-0.5">Picked up: {{ \Carbon\Carbon::parse($app->picked_up_at)->format('M d, Y') }}</p>
+                                                @endif
                                             </td>
                                             <td class="px-8 py-6">
                                                 @if($app->status === 'approved')
                                                     <span class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-blue-100 text-blue-600 border border-blue-200/50">Approved</span>
-                                                @else
+                                                @elseif($app->status === 'ready_to_pickup')
                                                     <span class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-emerald-100 text-emerald-600 border border-emerald-200/50">Ready to Pick Up</span>
+                                                @elseif($app->status === 'picked_up')
+                                                    <span class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 border border-slate-200/50">Picked Up</span>
+                                                @elseif($app->status === 'declined')
+                                                    <span class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-red-100 text-red-600 border border-red-200/50">Declined</span>
                                                 @endif
                                             </td>
                                             <td class="px-8 py-6">
@@ -199,7 +235,18 @@
                                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8" />
                                                                 </svg>
-                                                                Ready to Pick Up
+                                                                Ready
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                    @if($app->status === 'ready_to_pickup')
+                                                        <form action="{{ route('applications.pickedup', $app->id) }}" method="POST">
+                                                            @csrf @method('PATCH')
+                                                            <button type="submit" class="flex items-center gap-1.5 px-3 py-2 bg-slate-50 text-slate-600 rounded-xl hover:bg-slate-600 hover:text-white transition-all text-[10px] font-black uppercase tracking-wider">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                                </svg>
+                                                                Picked Up
                                                             </button>
                                                         </form>
                                                     @endif
@@ -216,7 +263,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="4" class="px-8 py-12 text-center text-slate-400 font-semibold">No applications found.</td>
+                                            <td colspan="5" class="px-8 py-12 text-center text-slate-400 font-semibold">No applications found.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -226,8 +273,6 @@
 
                     {{-- Resident Registry Tab --}}
                     <div id="panel-registry" class="hidden space-y-6">
-
-                        {{-- Add Resident Form --}}
                         <div class="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100">
                             <h2 class="text-lg font-black text-slate-800 mb-6">Add New Resident to Registry</h2>
                             <form action="{{ route('residents.store') }}" method="POST">
@@ -235,67 +280,54 @@
                                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                                     <div class="md:col-span-2 space-y-2">
                                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">First Name</label>
-                                        <input type="text" name="first_name" value="{{ old('first_name') }}" required
-                                        style="text-transform: uppercase;"
+                                        <input type="text" name="first_name" style="text-transform: uppercase;" value="{{ old('first_name') }}" required
                                             class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
                                     </div>
                                     <div class="space-y-2">
-                                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 block text-center">M.I.</label>
-                                        <input type="text" name="middle_initial" maxlength="1" value="{{ old('middle_initial') }}"
-                                        style="text-transform: uppercase;"
+                                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 block text-center">Middle Name</label>
+                                        <input type="text" name="middle_name" style="text-transform: uppercase;" value="{{ old('middle_name') }}"
                                             class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-center uppercase">
                                     </div>
                                     <div class="space-y-2">
                                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Last Name</label>
-                                        <input type="text" name="last_name" value="{{ old('last_name') }}" required
-                                        style="text-transform: uppercase;"
+                                        <input type="text" name="last_name" style="text-transform: uppercase;" value="{{ old('last_name') }}" required
                                             class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
                                     </div>
                                 </div>
                                 <div class="mt-4 space-y-2">
                                     <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Home Address</label>
-                                    <input type="text" name="address" value="{{ old('address') }}" placeholder="e.g. PUROK GARCIA"
-                                    style="text-transform: uppercase;"
-                                        class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold" required>
+                                    <input type="text" name="address" style="text-transform: uppercase;" value="{{ old('address') }}" placeholder="e.g. Blk 1 Lot 2, Sampaguita St."
+                                        class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
                                 </div>
                                 <div class="mt-6 flex justify-end">
-                                    <button type="submit"
-                                        class="bg-blue-700 hover:bg-blue-800 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-lg shadow-blue-100 active:scale-95">
+                                    <button type="submit" class="bg-blue-700 hover:bg-blue-800 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-lg shadow-blue-100 active:scale-95">
                                         + Add Resident
                                     </button>
                                 </div>
                             </form>
                         </div>
 
-                        {{-- Search Bar --}}
                         <form method="GET" action="/" class="flex gap-3">
-                            <input type="hidden" name="tab" value="registry"
-                            style="text-transform: uppercase;">
+                            <input type="hidden" name="tab" value="registry">
                             <div class="relative flex-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
-                                <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Search resident by name..."
+                                <input type="text" name="search" style="text-transform: uppercase;" value="{{ $search ?? '' }}" placeholder="Search resident by name..."
                                     class="w-full pl-12 pr-5 py-4 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700">
                             </div>
-                            <button type="submit" class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all">
-                                Search
-                            </button>
+                            <button type="submit" class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all">Search</button>
                             @if($search ?? false)
-                                <a href="/?tab=registry" class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center">
-                                    Clear
-                                </a>
+                                <a href="/?tab=registry" class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center">Clear</a>
                             @endif
                         </form>
 
                         @if($search ?? false)
                             <p class="text-sm font-semibold text-slate-500">
-                                Showing results for <span class="text-blue-600 font-black">"{{ $search }}"</span>
-                                — {{ $residents->count() }} found
+                                Results for <span class="text-blue-600 font-black">"{{ $search }}"</span> — {{ $residents->count() }} found
                             </p>
                         @endif
 
-                        {{-- Residents Table --}}
                         <div class="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
                             <table class="w-full text-left">
                                 <thead>
@@ -313,14 +345,14 @@
                                                 <span class="text-[11px] font-black text-blue-600 tracking-widest bg-blue-50 px-3 py-1.5 rounded-lg">{{ $res->resident_id }}</span>
                                             </td>
                                             <td class="px-8 py-5">
-                                                <p class="font-extrabold text-slate-800">
+                                                <p class="font-extrabold text-slate-800 uppercase">
                                                     {{ $res->first_name }}
-                                                    {{ $res->middle_initial ? strtoupper($res->middle_initial) . '.' : '' }}
+                                                    {{ $res->middle_name ? strtoupper($res->middle_name) . '.' : '' }}
                                                     {{ $res->last_name }}
                                                 </p>
                                             </td>
                                             <td class="px-8 py-5">
-                                                <p class="text-sm text-slate-500 font-medium">{{ $res->address ?? '—' }}</p>
+                                                <p class="text-sm text-slate-500 font-medium uppercase">{{ $res->address ?? '—' }}</p>
                                             </td>
                                             <td class="px-8 py-5">
                                                 <div class="flex justify-end opacity-0 group-hover:opacity-100 transition-all">
@@ -349,8 +381,6 @@
 
                     {{-- Staff Accounts Tab --}}
                     <div id="panel-staff" class="hidden space-y-6">
-
-                        {{-- Create Staff Form --}}
                         <div class="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100">
                             <h2 class="text-lg font-black text-slate-800 mb-6">Create Staff Account</h2>
                             <form action="{{ route('staff.store') }}" method="POST">
@@ -358,14 +388,12 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div class="space-y-2">
                                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">First Name</label>
-                                        <input type="text" name="first_name" value="{{ old('first_name') }}" required
-                                        style="text-transform: uppercase;"
+                                        <input type="text" name="first_name" style="text-transform: uppercase;" value="{{ old('first_name') }}" required
                                             class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
                                     </div>
                                     <div class="space-y-2">
                                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Last Name</label>
-                                        <input type="text" name="last_name" value="{{ old('last_name') }}" required
-                                        style="text-transform: uppercase;"
+                                        <input type="text" name="last_name" style="text-transform: uppercase;" value="{{ old('last_name') }}" required
                                             class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
                                     </div>
                                 </div>
@@ -380,8 +408,7 @@
                                         <div class="relative">
                                             <input type="password" name="password" id="staff_password" required
                                                 class="w-full px-5 py-4 pr-14 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
-                                            <button type="button" onclick="togglePassword('staff_password', 'eye-staff')"
-                                                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors">
+                                            <button type="button" onclick="togglePassword('staff_password','eye-staff')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors">
                                                 <svg id="eye-staff" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -394,8 +421,7 @@
                                         <div class="relative">
                                             <input type="password" name="password_confirmation" id="staff_password_confirm" required
                                                 class="w-full px-5 py-4 pr-14 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
-                                            <button type="button" onclick="togglePassword('staff_password_confirm', 'eye-staff-confirm')"
-                                                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors">
+                                            <button type="button" onclick="togglePassword('staff_password_confirm','eye-staff-confirm')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors">
                                                 <svg id="eye-staff-confirm" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -405,15 +431,13 @@
                                     </div>
                                 </div>
                                 <div class="mt-6 flex justify-end">
-                                    <button type="submit"
-                                        class="bg-blue-700 hover:bg-blue-800 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-lg shadow-blue-100 active:scale-95">
+                                    <button type="submit" class="bg-blue-700 hover:bg-blue-800 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-lg shadow-blue-100 active:scale-95">
                                         + Create Staff Account
                                     </button>
                                 </div>
                             </form>
                         </div>
 
-                        {{-- Staff List --}}
                         <div class="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
                             <table class="w-full text-left">
                                 <thead>
@@ -475,11 +499,18 @@
                         <p class="text-slate-500 mt-2">Submit your details below to process your application.</p>
                     </header>
 
+                    {{-- Info box about rules --}}
+                    <div class="bg-blue-50 border border-blue-200 rounded-2xl px-6 py-4 mb-6 text-sm text-blue-700 font-medium space-y-1">
+                        <p>⏱ Applications not processed within <span class="font-black">2 days</span> will be automatically declined.</p>
+                         <p>⏱ Applications not picked up within <span class="font-black">2 days</span> will be automatically marked as missed.</p>
+                        <p>📅 You may request the same document again <span class="font-black">1 week after pickup</span>.</p>
+                    </div>
+
                     <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl shadow-slate-200 border border-white">
                         <form action="{{ route('applications.store') }}" method="POST" class="space-y-6">
                             @csrf
 
-                            @if($errors->any() && !$errors->has('not_resident'))
+                            @if($errors->any() && !$errors->has('not_resident') && !$errors->has('duplicate_app'))
                                 <div class="bg-red-50 border border-red-200 text-red-700 text-sm font-semibold px-5 py-3 rounded-2xl">
                                     {{ $errors->first() }}
                                 </div>
@@ -488,21 +519,20 @@
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                                 <div class="md:col-span-2 space-y-2">
                                     <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">First Name</label>
-                                    <input type="text" name="first_name" value="{{ old('first_name', Auth::user()->first_name ?? '') }}"
-                                    style="text-transform: uppercase;"
-                                        class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold" required>
+                                    <input type="text" name="first_name" style="text-transform: uppercase;" value="{{ old('first_name', Auth::user()->first_name ?? '') }}"
+                                    class="w-full px-5 py-4 bg-slate-100 border-none rounded-2xl outline-none font-semibold cursor-not-allowed" readonly>
                                 </div>
+
                                 <div class="space-y-2">
-                                    <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 block text-center">M.I.</label>
-                                    <input type="text" name="middle_initial" maxlength="1" value="{{ old('middle_initial') }}"
-                                    style="text-transform: uppercase;"
-                                        class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-center uppercase">
+                                   <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Middle Name</label>
+                                    <input type="text" name="middle_name" style="text-transform: uppercase;" value="{{ old('middle_name', Auth::user()->middle_name ?? '') }}"
+                                    class="w-full px-5 py-4 bg-slate-100 border-none rounded-2xl outline-none font-semibold cursor-not-allowed" readonly>
                                 </div>
+
                                 <div class="space-y-2">
                                     <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Last Name</label>
-                                    <input type="text" name="last_name" value="{{ old('last_name', Auth::user()->last_name ?? '') }}"
-                                    style="text-transform: uppercase;"
-                                        class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold" required>
+                                    <input type="text" name="last_name" style="text-transform: uppercase;" value="{{ old('last_name', Auth::user()->last_name ?? '') }}"
+                                        class="w-full px-5 py-4 bg-slate-100 border-none rounded-2xl outline-none font-semibold cursor-not-allowed" readonly>
                                 </div>
                             </div>
 
@@ -518,8 +548,7 @@
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Purpose</label>
-                                    <input type="text" name="purpose" value="{{ old('purpose') }}" placeholder="e.g. Job Application"
-                                    style="text-transform: uppercase;"  
+                                    <input type="text" name="purpose" style="text-transform: uppercase;" value="{{ old('purpose') }}" placeholder="e.g. Job Application"
                                         class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold" required>
                                 </div>
                             </div>
@@ -531,6 +560,7 @@
                         </form>
                     </div>
 
+                    {{-- My Applications --}}
                     @php $myApps = Auth::user()->applications()->latest()->get(); @endphp
                     @if($myApps->count())
                         <div class="mt-10">
@@ -542,12 +572,34 @@
                                             <p class="font-bold text-slate-800 text-sm">{{ $app->document_type }}</p>
                                             <p class="text-[11px] text-slate-400 italic mt-0.5">"{{ $app->purpose }}"</p>
                                             <p class="text-[10px] text-slate-300 mt-1">{{ $app->created_at->format('M d, Y h:i A') }}</p>
+                                            @if($app->status === 'picked_up' && $app->picked_up_at)
+                                                @php $canRequestOn = \Carbon\Carbon::parse($app->picked_up_at)->addWeek(); @endphp
+                                                <p class="text-[10px] text-blue-400 mt-0.5 font-semibold">
+                                                    Can request again: {{ $canRequestOn->format('M d, Y') }}
+                                                </p>
+                                            @endif
+                                            @if($app->status === 'approved')
+                                                @php $declineOn = $app->created_at->addDays(2); @endphp
+                                                <p class="text-[10px] text-red-400 mt-0.5 font-semibold">
+                                                    Auto-decline on: {{ $declineOn->format('M d, Y h:i A') }}
+                                                </p>
+                                            @endif
+                                            @if($app->status === 'ready_to_pickup')
+                                                @php $missedOn = \Carbon\Carbon::parse($app->created_at)->addDays(2); @endphp
+                                                <p class="text-[10px] text-red-400 mt-0.5 font-semibold">
+                                                    Auto-mark as missed on: {{ $missedOn->format('M d, Y h:i A') }}
+                                                </p>
+                                            @endif
                                         </div>
-                                        <div>
+                                        <div class="shrink-0 ml-4">
                                             @if($app->status === 'approved')
                                                 <span class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-blue-100 text-blue-600 border border-blue-200/50">Approved</span>
-                                            @else
+                                            @elseif($app->status === 'ready_to_pickup')
                                                 <span class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-emerald-100 text-emerald-600 border border-emerald-200/50 animate-pulse">Ready to Pick Up</span>
+                                            @elseif($app->status === 'picked_up')
+                                                <span class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 border border-slate-200/50">Picked Up</span>
+                                            @elseif($app->status === 'declined')
+                                                <span class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-red-100 text-red-500 border border-red-200/50">Declined</span>
                                             @endif
                                         </div>
                                     </div>
@@ -569,12 +621,8 @@
                 <h1 class="text-4xl font-black text-slate-900 tracking-tight">Barangay Connect</h1>
                 <p class="text-slate-500 mt-3 text-lg font-medium">Access barangay services online — fast and easy.</p>
                 <div class="flex justify-center gap-4 mt-8">
-                    <a href="{{ route('login') }}" class="bg-white border border-slate-200 text-slate-700 px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all hover:bg-slate-50 shadow-sm">
-                        Sign In
-                    </a>
-                    <a href="{{ route('register') }}" class="bg-blue-700 hover:bg-blue-800 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-xl shadow-blue-100">
-                        Create Account
-                    </a>
+                    <a href="{{ route('login') }}" class="bg-white border border-slate-200 text-slate-700 px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all hover:bg-slate-50 shadow-sm">Sign In</a>
+                    <a href="{{ route('register') }}" class="bg-blue-700 hover:bg-blue-800 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-xl shadow-blue-100">Create Account</a>
                 </div>
             </div>
         @endguest
@@ -585,7 +633,7 @@
         <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em]">&copy; {{ date('Y') }} Barangay Connect System</p>
     </footer>
 
-  <script>
+   <script>
     function switchTab(tab) {
         const tabs = ['applications', 'registry', 'staff'];
 
@@ -602,7 +650,6 @@
         if (activeBtn)   activeBtn.classList.add('active');
     }
 
-    // Auto-open correct tab after form submit or on page load
     document.addEventListener('DOMContentLoaded', function () {
         @if(session('open_tab'))
             switchTab('{{ session("open_tab") }}');
@@ -630,6 +677,5 @@
         icon.innerHTML = isHidden ? eyeOpen : eyeSlash;
     }
 </script>
-
 </body>
 </html>

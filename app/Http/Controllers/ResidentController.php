@@ -9,14 +9,14 @@ class ResidentController extends Controller {
         $request->validate([
             'first_name'     => 'required|string|max:100',
             'last_name'      => 'required|string|max:100',
-            'middle_initial' => 'nullable|string|max:1',
+            'middle_name' => 'nullable|string|max:100',
             'address'        => 'required|string|max:255',
         ]);
 
         // Check for duplicate full name
         $exists = BarangayResident::whereRaw('LOWER(first_name) = ?', [strtolower($request->first_name)])
             ->whereRaw('LOWER(last_name) = ?', [strtolower($request->last_name)])
-            ->whereRaw('LOWER(COALESCE(middle_initial, "")) = ?', [strtolower($request->middle_initial ?? '')])
+            ->whereRaw('LOWER(COALESCE(middle_name, "")) = ?', [strtolower($request->middle_name ?? '')])
             ->exists();
 
         if ($exists) {
@@ -34,7 +34,7 @@ class ResidentController extends Controller {
        BarangayResident::create([
         'first_name'     => $request->first_name,
         'last_name'      => $request->last_name,
-        'middle_initial' => $request->middle_initial,
+        'middle_name'    => $request->middle_name,
         'address'        => $request->address,
         'resident_id'    => $resId,
     ]);

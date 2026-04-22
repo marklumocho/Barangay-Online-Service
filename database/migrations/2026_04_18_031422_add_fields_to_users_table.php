@@ -8,6 +8,7 @@ return new class extends Migration {
         Schema::table('users', function (Blueprint $table) {
             $table->string('resident_id')->nullable()->after('name');
             $table->string('first_name')->nullable()->after('resident_id');
+            $table->string('middle_name')->nullable()->after('first_name');
             $table->string('last_name')->nullable()->after('first_name');
             $table->enum('role', ['resident', 'staff'])->default('resident')->after('last_name');
         });

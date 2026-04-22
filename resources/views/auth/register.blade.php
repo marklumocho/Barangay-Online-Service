@@ -37,6 +37,13 @@
                     style="text-transform: uppercase;"
                         class="w-full px-5 py-4 bg-slate-50 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold border-none">
                 </div>
+                  <div class="space-y-2">
+                    <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Middle Name</label>
+                    <input type="text" name="middle_name" value="{{ old('middle_name') }}" 
+                    style="text-transform: uppercase;"
+                        class="w-full px-5 py-4 bg-slate-50 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-semibold border-none">
+              
+            </div>
                 <div class="space-y-2">
                     <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Last Name</label>
                     <input type="text" name="last_name" value="{{ old('last_name') }}" required

@@ -12,8 +12,7 @@ return new class extends Migration {
             $table->string('resident_id');
             $table->string('document_type');
             $table->string('purpose');
-            $table->text('notes')->nullable();
-            $table->enum('status', ['approved', 'ready_to_pickup'])->default('approved');
+            $table->enum('status', ['approved', 'ready_to_pickup', 'picked_up', 'declined', 'missed'])->default('approved');
             $table->timestamps();
         });
     }
